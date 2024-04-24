@@ -21,13 +21,8 @@ def random_labelled_image(
     #  Implement according to the docstring description.
     # ====== YOUR CODE: ======
 
-    # extract shape tuple
-    channels = shape[0]
-    width = shape[1]
-    height = shape[2]
-
     # Generate the image tensor with random values between low and high
-    image = torch.rand(channels, width, height) * (high - low) + low
+    image = torch.randint(low=low, high=high, size=shape, dtype=dtype)
 
     # Generate a random label between 0 and num_classes-1
     label = torch.randint(0, num_classes, (1,)).item()

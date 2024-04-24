@@ -23,7 +23,9 @@ class LinearClassifier(object):
 
         self.weights = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # Create weights tensor of appropriate dimensions
+        # Initialize it from a normal distribution with zero mean and the given std.
+        self.weights = torch.randn(n_classes, n_features) * weight_std
         # ========================
 
     def predict(self, x: Tensor):
@@ -45,7 +47,14 @@ class LinearClassifier(object):
 
         y_pred, class_scores = None, None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+
+        # Implement linear prediction:
+        # Calculate the score for each class using the weights
+        class_scores = x.matmul(self.weights.t())  # (N, n_classes)
+
+        # Return the class y_pred with the highest score
+        y_pred = torch.argmax(class_scores, dim=1)  # (N,)
+
         # ========================
 
         return y_pred, class_scores
@@ -66,7 +75,13 @@ class LinearClassifier(object):
 
         acc = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        if y.shape != y_pred.shape:
+            raise ValueError("The shape of ground truth labels and predicted labels must match.")
+        # Calculate the number of correct predictions
+        correct = (y == y_pred).sum().item()  # .item() converts a tensor with one element to a Python scalar
+        # Calculate accuracy as the number of correct predictions divided by the total number of predictions
+        total = y.shape[0]
+        acc = correct / total
         # ========================
 
         return acc * 100

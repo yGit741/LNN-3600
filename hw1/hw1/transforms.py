@@ -80,5 +80,14 @@ class BiasTrick(object):
         #  Add a 1 at the beginning of the given tensor's feature dimension.
         #  Hint: See torch.cat().
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
-        # ========================
+        # Get the size of all dimensions except for the last one
+        shape_of_ones = x.shape[:-1] + (1,)  # creates a new tuple with a 1 in the last position
+
+        # Create a tensor of ones that matches the shape for the prepend operation
+        ones = torch.ones(shape_of_ones, dtype=x.dtype, device=x.device)
+
+        # Concatenate the ones tensor and the input tensor along the last dimension
+        result = torch.cat([ones, x], dim=-1)
+
+    # ========================
+        return result
