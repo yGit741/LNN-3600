@@ -26,7 +26,8 @@ class InvertColors(object):
         """
         # TODO: Invert the colors of the input image.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # Invert the color due to the 0 to 1 normalization
+        return 1 - x
         # ========================
 
 
@@ -38,7 +39,8 @@ class FlipUpDown(object):
         """
         # TODO: Flip the input image so that up is down.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # use the builtin torch function
+        return torch.flip(x, [1])
         # ========================
 
 
