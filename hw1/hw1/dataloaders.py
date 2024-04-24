@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torch.utils.data
 from typing import Sized, Iterator
-from torch.utils.data import Dataset, Sampler
+from torch.utils.data import Dataset, Sampler, SubsetRandomSampler, DataLoader
 
 
 class FirstLastSampler(Sampler):
@@ -25,7 +25,17 @@ class FirstLastSampler(Sampler):
         # If the length of the data source is N, you should return indices in a
         # first-last ordering, i.e. [0, N-1, 1, N-2, ...].
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+
+        n = len(self.data_source)
+        # Yielding indices from start to end and from end to start converging towards the center
+        start = 0
+        end = n - 1
+        while start <= end:
+            yield start
+            if start != end:
+                yield end
+            start += 1
+            end -= 1
         # ========================
 
     def __len__(self):
@@ -58,7 +68,26 @@ def create_train_validation_loaders(
     #  Hint: you can specify a Sampler class for the `DataLoader` instance
     #  you create.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    # Total number of samples in the dataset
+    num_samples = len(dataset)
+    indices = list(range(num_samples))
+    split = int(np.floor(validation_ratio * num_samples))
+
+    # Shuffle indices randomly
+    np.random.shuffle(indices)
+
+    # Split indices into training and validation sets
+    train_indices, val_indices = indices[split:], indices[:split]
+
+    # Create samplers
+    train_sampler = SubsetRandomSampler(train_indices)
+    validation_sampler = SubsetRandomSampler(val_indices)
+
+    # Create DataLoader instances
+    dl_train = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler, num_workers=num_workers)
+    dl_valid = DataLoader(dataset, batch_size=batch_size, sampler=validation_sampler, num_workers=num_workers)
+
     # ========================
 
     return dl_train, dl_valid

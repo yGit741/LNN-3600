@@ -26,7 +26,17 @@ class InvertColors(object):
         """
         # TODO: Invert the colors of the input image.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+
+        # Check if the input tensor is a floating point data type
+        if not torch.is_floating_point(x):
+            raise TypeError("Input tensor must be a floating point tensor")
+
+        # Ensure the values are within the expected range [0, 1]
+        if x.min() < 0 or x.max() > 1:
+            raise ValueError("Input tensor values should be in the range [0, 1]")
+
+        # Invert the colors
+        return 1 - x
         # ========================
 
 
@@ -38,7 +48,14 @@ class FlipUpDown(object):
         """
         # TODO: Flip the input image so that up is down.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+
+        if not isinstance(x, torch.Tensor):
+            raise TypeError("Input must be a PyTorch tensor")
+        if x.dim() != 3:
+            raise ValueError("Input tensor must have three dimensions (C, H, W)")
+
+            # Flip the image vertically
+        return x.flip(1)  # Flips along the height dimension
         # ========================
 
 
