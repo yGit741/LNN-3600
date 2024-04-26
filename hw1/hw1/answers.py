@@ -47,6 +47,8 @@ Cross-validation helps in reducing variability by using multiple different valid
 This averaged performance metric gives a more reliable estimate of how well the model is expected to perform on unseen data compared to using a single train-test split. 
 This estimation is crucial for tuning model parameters and for choosing between different models or configurations.
 """
+# ==============
+# Part 2 answers
 
 part1_q2 = r"""
 **Your answer:**
@@ -99,11 +101,9 @@ part2_q1 = r"""
 
 Write your answer using **markdown** and $\LaTeX$:
 ```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+The selection of Δ>0 in the SVM hinge loss function is considered arbitrary because it primarily serves as a margin parameter that defines how wide the margin should 
+be between the separating hyperplane and the support vectors. The key idea behind SVM is to maximize this margin to improve the generalization ability of the classifier. 
+The actual value of Δ does not affect the final classifier obtained after training, provided that the learning and optimization are scaled appropriately. 
 """
 
 part2_q2 = r"""
@@ -112,10 +112,12 @@ part2_q2 = r"""
 
 Write your answer using **markdown** and $\LaTeX$:
 ```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+Linear models learn to assign weights to individual features (pixels) based on their importance for classification.
+For example, in a binary classification task (e.g., cat vs. dog), positive weights might indicate features associated with one class (e.g., cat), 
+while negative weights correspond to features associated with the other class (e.g., dog).
+The decision boundary is determined by the combination of these weighted features.So the Linear Model tries to map the weights that allow it to 
+distinguish between the different classes. In our example, we can see that for example a sqewed 3 is misinterpreted as 2 probably because 
+the high part of the number resembles a 2.
 
 """
 
@@ -125,11 +127,12 @@ part2_q3 = r"""
 
 Write your answer using **markdown** and $\LaTeX$:
 ```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+Based on the graph of the training set loss I would say that the learning rate is good - it nears a plato and does not seem
+to overshoot the minimum, nor does it seem to be too low so that the time to reach this minimum would be high.
 
+Based on the graph of the training and test accuracy it would seem that the model appears to be slighly overfitted to the 
+training set, as the training set is close to 90%, while the validation accuracy lags behind by a small margin. 
+This suggests that the model performs slightly worse on unseen data compared to the training data.
 """
 
 # ==============

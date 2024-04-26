@@ -86,6 +86,39 @@ class LinearClassifier(object):
 
         return acc * 100
 
+    def _train_epoch(self, dataloader, loss_fn, learn_rate, weight_decay, res):
+        total_loss, total_correct, total_samples = 0, 0, 0
+        for x, y in dataloader:
+            y_pred, class_scores = self.predict(x)
+            loss = loss_fn.loss(x, y, class_scores, y_pred)
+            loss += weight_decay * self.weights.pow(2).sum()  # Regularization
+
+            # Gradient calculation and weight update
+            self.weights -= learn_rate * (loss_fn.grad() + 2 * weight_decay * self.weights)
+
+            total_loss += loss.item() * x.size(0)
+            total_correct += (y_pred == y).sum().item()
+            total_samples += x.size(0)
+
+        avg_loss = total_loss / total_samples
+        accuracy = total_correct / total_samples * 100
+        res.loss.append(avg_loss)
+        res.accuracy.append(accuracy)
+
+    def _eval_epoch(self, dataloader, loss_fn, res):
+        total_loss, total_correct, total_samples = 0, 0, 0
+        for x, y in dataloader:
+            y_pred, class_scores = self.predict(x)
+            loss = loss_fn.loss(x, y, class_scores, y_pred)
+            total_loss += loss.item() * x.size(0)
+            total_correct += (y_pred == y).sum().item()
+            total_samples += x.size(0)
+
+        avg_loss = total_loss / total_samples
+        accuracy = total_correct / total_samples * 100
+        res.loss.append(avg_loss)
+        res.accuracy.append(accuracy)
+
     def train(
         self,
         dl_train: DataLoader,
@@ -117,7 +150,10 @@ class LinearClassifier(object):
             #     using the weight_decay parameter.
 
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            # Training loop
+            self._train_epoch(dl_train, loss_fn, learn_rate, weight_decay, train_res)
+            # Validation loop
+            self._eval_epoch(dl_valid, loss_fn, valid_res)
             # ========================
             print(".", end="")
 
@@ -138,7 +174,10 @@ class LinearClassifier(object):
         #  The output shape should be (n_classes, C, H, W).
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        if has_bias:
+            w_images = self.weights[:, 1:].view(self.n_classes, *img_shape)
+        else:
+            w_images = self.weights.view(self.n_classes, *img_shape)
         # ========================
 
         return w_images
@@ -151,7 +190,9 @@ def hyperparams():
     #  Manually tune the hyperparameters to get the training accuracy test
     #  to pass.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    hp = dict(weight_std=0.05, learn_rate=0.01, weight_decay=0.0001)
     # ========================
 
     return hp
+
+
