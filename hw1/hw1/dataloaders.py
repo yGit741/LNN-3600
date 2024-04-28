@@ -6,6 +6,7 @@ from typing import Sized, Iterator
 from torch.utils.data import Dataset, Sampler
 
 
+
 class FirstLastSampler(Sampler):
     """
     A sampler that returns elements in a first-last order.
@@ -67,13 +68,14 @@ def create_train_validation_loaders(
     train_indices = indices[:n_train]
     valid_indices = indices[n_train:]
 
-    train_sampler = torch.SubsetRandomSampler(train_indices)
-    valid_sampler = torch.SubsetRandomSampler(valid_indices)
 
-    dl_train = torch.DataLoader(
+    train_sampler = torch.utils.data.SubsetRandomSampler(train_indices)
+    valid_sampler = torch.utils.data.SubsetRandomSampler(valid_indices)
+
+    dl_train = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, num_workers=num_workers, sampler=train_sampler
     )
-    dl_valid = torch.DataLoader(
+    dl_valid = torch.utils.data.DataLoader(
         dataset, batch_size=batch_size, num_workers=num_workers, sampler=valid_sampler
     )
     # ========================
