@@ -20,8 +20,18 @@ def random_labelled_image(
     # TODO:
     #  Implement according to the docstring description.
     # ====== YOUR CODE: ======
+<<<<<<< HEAD
     image = torch.randint(low, high, shape, dtype=dtype)
     label = torch.randint(0, num_classes, (1,)).item()
+=======
+
+    # Generate the image tensor with random values between low and high
+    image = torch.randint(low=low, high=high, size=shape, dtype=dtype)
+
+    # Generate a random label between 0 and num_classes-1
+    label = torch.randint(0, num_classes, (1,)).item()
+
+>>>>>>> LNN-3600/master
     # ========================
     return image, label
 
@@ -36,17 +46,34 @@ def torch_temporary_seed(seed: int):
     #  Implement this context manager as described.
     #  See torch.random.get/set_rng_state(), torch.random.manual_seed().
     # ====== YOUR CODE: ======
+<<<<<<< HEAD
     state = torch.random.get_rng_state()
     # ========================
     try:
         # ====== YOUR CODE: ======
         torch.random.manual_seed(seed)
+=======
+    # Save the current state of PyTorch's random number generator
+    orig_state = torch.get_rng_state()
+
+    # ========================
+    try:
+        # ====== YOUR CODE: ======
+        # Set the new random seed
+        torch.manual_seed(seed)
+>>>>>>> LNN-3600/master
         # ========================
         yield
     finally:
         # ====== YOUR CODE: ======
+<<<<<<< HEAD
         torch.random.set_rng_state(state)
         # ========================
+=======
+        # Restore the original state of the random number generator
+        torch.set_rng_state(orig_state)
+    # ========================
+>>>>>>> LNN-3600/master
 
 
 class RandomImageDataset(Dataset):
@@ -82,6 +109,7 @@ class RandomImageDataset(Dataset):
         #  the random state outside this method.
         #  Raise a ValueError if the index is out of range.
         # ====== YOUR CODE: ======
+<<<<<<< HEAD
 
         # verifying the index and raise 'Index out of range' error if necessary
         if index >= self.num_samples or index < 0:
@@ -91,6 +119,13 @@ class RandomImageDataset(Dataset):
         with torch_temporary_seed(index):
             # returning the labeled image
             return random_labelled_image(shape=self.image_dim, num_classes=self.num_classes)
+=======
+        if index >= self.num_samples:
+            raise ValueError('Index is out of range')
+        else:
+            with torch_temporary_seed(index):
+                return random_labelled_image(self.image_dim, self.num_classes)
+>>>>>>> LNN-3600/master
         # ========================
 
     def __len__(self):
@@ -128,6 +163,7 @@ class ImageStreamDataset(IterableDataset):
         #  The iterator should produce an infinite stream of data.
         # ====== YOUR CODE: ======
         while True:
+<<<<<<< HEAD
             # generate a random index to use with torch_temporary_seed
             index = torch.randint(0, self.num_classes, (1,)).item()
 
@@ -138,6 +174,10 @@ class ImageStreamDataset(IterableDataset):
 
             # yield the image and label as a tuple
             yield image, label
+=======
+            image, label = random_labelled_image(self.image_dim, self.num_classes)
+            yield (image, label)
+>>>>>>> LNN-3600/master
         # ========================
 
 
@@ -165,11 +205,18 @@ class SubsetDataset(Dataset):
         #  Return the item at index + offset from the source dataset.
         #  Raise an IndexError if index is out of bounds.
         # ====== YOUR CODE: ======
+<<<<<<< HEAD
         # check if the index is the range of the subset
         if index >= self.subset_len:
             raise IndexError("Index out of bounds")
         # return the item at index + offset from  source dataset
         return self.source_dataset[index + self.offset]
+=======
+        if index + self.offset >= self.subset_len:
+            raise IndexError("Index out of range")
+        else:
+            return self.source_dataset[self.offset + index]
+>>>>>>> LNN-3600/master
         # ========================
 
     def __len__(self):

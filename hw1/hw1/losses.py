@@ -1,5 +1,6 @@
 import abc
 import torch
+import torch.nn.functional as F
 
 
 class ClassifierLoss(abc.ABC):
@@ -52,12 +53,31 @@ class SVMHingeLoss(ClassifierLoss):
 
         loss = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # Number of samples
+        num_samples = x_scores.shape[0]
+
+        # Get scores of the correct classes
+        correct_class_scores = x_scores[torch.arange(num_samples), y].unsqueeze(1)
+
+        # Calculate the margins for all class scores
+        margins = x_scores - correct_class_scores + self.delta
+
+        # Zero the margins for the correct class to ignore them in the loss calculation
+        margins[torch.arange(num_samples), y] = 0
+
+        # Calculate the hinge loss: max(0, margins)
+        loss = F.relu(margins).sum(dim=1).mean()  # Sum over classes and average over samples
+
         # ========================
 
         # TODO: Save what you need for gradient calculation in self.grad_ctx
         # ====== YOUR CODE: ======
+<<<<<<< HEAD
         # raise NotImplementedError()
+=======
+        # Save context for gradient calculation
+        self.grad_ctx = {'x': x, 'y': y, 'margins': margins, 'num_samples': num_samples}
+>>>>>>> LNN-3600/master
         # ========================
 
         return loss
@@ -75,7 +95,21 @@ class SVMHingeLoss(ClassifierLoss):
 
         grad = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        x = self.grad_ctx['x']
+        y = self.grad_ctx['y']
+        margins = self.grad_ctx['margins']
+        num_samples = self.grad_ctx['num_samples']
+
+        # Create an indicator matrix where margins contribute to the loss
+        positive_margins = margins > 0
+
+        # Initialize the gradient matrix for scores
+        grad_scores = torch.zeros_like(margins)
+        grad_scores[positive_margins] = 1
+        grad_scores[torch.arange(num_samples), y] -= positive_margins.sum(dim=1)
+
+        # Compute the gradient with respect to the weights as x^T @ grad_scores
+        grad = x.T @ grad_scores / num_samples
         # ========================
 
-        return grad
+        return grad.T
